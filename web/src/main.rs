@@ -1,6 +1,5 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
-use std::io::prelude::*;
 use rocket::local::Client;
 extern crate rocket;
 extern crate slack_hook;
@@ -23,12 +22,12 @@ fn main() {
     rocket::ignite().mount("/", routes![index]).launch();
     let slack = Slack::new("https://hooks.slack.com/services/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").unwrap();
     let p = PayloadBuilder::new()
-        .test("JIMMY SUGER")
+        .text("JIMMY SUGER")
         .username("TrashTalker")
         .build()
         .unwrap();
 
-    let res = slack.send(&p);
+    let _res = slack.send(&p);
 //    match  {
 //        Ok(()) => println!("OK"),
 //        Err(x) => println!("ERR: {:?}",x)
