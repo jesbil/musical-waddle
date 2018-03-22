@@ -14,7 +14,8 @@ impl MarkovChain {
         }
     }
 
-    pub fn add_words(&mut self, words: Vec<&str>) {
+    pub fn parse(&mut self, sentence: &str) {
+        let words = sentence.split(" ").collect::<Vec<&str>>();
         let word_count = words.len();
 
         for n in 0..word_count {
@@ -78,10 +79,9 @@ mod tests {
     #[test]
     fn add_words() {
         let mut markov = MarkovChain::new();
-        let mut vec = Vec::new();
-        vec.push("HELLO");
-        vec.push("WORLD");
-        markov.add_words(vec);
+        markov.parse("I REALLY LIKE TO SAY HELLO AND TO SAY THAT THIS IS A NICE WORLD WE HAVE.");
+        let sentence = markov.generate_sentence();
+        println!("{:?}", sentence);
     }
 
 }
