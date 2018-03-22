@@ -6,10 +6,22 @@ use slack_hook::{Slack, PayloadBuilder};
 
 
 
-#[get("/")]
-fn index() {
+
+#[get("/trash")]
+fn get_trash() {
     "Hello, world!";
     slack_post()
+}
+
+#[post("/trash", data="<input>")]
+fn post_trash(input: String) {
+    save_trash(input);
+}
+
+fn save_trash(trash: String) {
+    println!("Trashtalk {:?}", trash);
+
+
 }
 
 fn slack_post() {
@@ -23,7 +35,7 @@ fn slack_post() {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index]).launch();
+    rocket::ignite().mount("/", routes![get_trash, post_trash]).launch();
 
 //    match  {
 //        Ok(()) => println!("OK"),

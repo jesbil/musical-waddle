@@ -8,3 +8,4 @@ slack_api = "0.15.0"
 rocket = "0.3.6"
 rocket_codegen = "0.3.6"
 slack-hook = "0.6"
+markov = { path = "../markov" }
