@@ -1,21 +1,24 @@
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
 use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
+use rocket::local::Client;
+extern crate rocket;
 
-fn main() {
-    let listener = TcpListener::bind("0.0.0.0:8080").unwrap();
-
-    for stream in listener.incoming() {
-        let stream = stream.unwrap();
-
-        handle_connection(stream);
-    }
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
 }
 
-fn handle_connection(mut stream: TcpStream) {
-    let mut buffer = [0; 512];
+fn client_post() {
+    let rocket = rocket::ignite();
+    let client = Client::new(rocket).expect("valid rocket");
+    let response = client.post("/")
+        .body("Hello, world!")
+        .dispatch();
+}
 
-    stream.read(&mut buffer).unwrap();
-
-    println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
+fn main() {
+    rocket::ignite().mount("/", routes![index]).launch();
 }
