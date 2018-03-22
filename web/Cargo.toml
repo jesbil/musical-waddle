@@ -1,0 +1,7 @@
+[package]
+name = "web"
+version = "0.1.0"
+
+[dependencies]
+slack = "0.16.0"
+slack_api = "0.15.0"
