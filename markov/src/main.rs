@@ -8,7 +8,7 @@ fn main() {
     let mut markov = MarkovChain::new();
 
     for sentence in sentences {
-        markov.parse(sentence);
+        markov.add_sentence(sentence);
     }
 
     println!("{:?}",markov.generate_sentence());

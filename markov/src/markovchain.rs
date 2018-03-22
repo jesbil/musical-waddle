@@ -23,7 +23,7 @@ impl MarkovChain {
         let word_count = words.len();
 
         for n in 0..word_count {
-            if n + 2 < word_count {
+            if n + 1 < word_count {
                 if (n == 0) {
                     self.start_words.push(words[n].to_string());
                 }
