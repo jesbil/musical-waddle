@@ -7,62 +7,42 @@ use markov::markovchain::MarkovChain;
 use markov::file_parser::parse_file;
 use rocket::State;
 use slack_hook::{Slack, PayloadBuilder};
+use std::sync::RwLock;
 
-//static mut TRASH_TALKER: TrashTalker = TrashTalker::new();
 
-struct TrashTalker {
-    chain: MarkovChain,
-    slack: Slack,
+#[post("/trashtalk", data="<input>")]
+fn get_trash(chain: State<RwLock<MarkovChain>>, slack: State<Slack>, input: String) {
+    let chain = chain.read().unwrap();
+    let message = chain.generate_sentence();
+    let p = PayloadBuilder::new()
+        .text(chain.generate_sentence())
+        .username("TrashTalker")
+        .build()
+        .unwrap();
+    let _res = slack.send(&p);
 }
 
-impl TrashTalker {
-    pub fn new() -> TrashTalker {
-        TrashTalker {
-            chain: MarkovChain::new(),
-            slack: Slack::new("https://hooks.slack.com/services/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").unwrap(),
-        }
-    }
-
-    pub fn generate_trash(&self) -> String {
-        let message = self.chain.generate_sentence();
-        message
-    }
-
-    pub fn save_trash(&mut self, trash: &str) {
-        println!("Trashtalk {:?}", trash);
-        self.chain.add_sentence(trash);
-    }
-
-    pub fn slack_post(&self, message: String) {
-        let p = PayloadBuilder::new()
-            .text(message)
-            .username("TrashTalker")
-            .build()
-            .unwrap();
-        let _res = &self.slack.send(&p);
-    }
-}
-
-#[get("/trash")]
-fn get_trash(state: State<&TrashTalker>){
-    let message = state.generate_trash();
-    state.slack_post(message);
-}
 
 #[post("/trash", data="<input>")]
-fn post_trash(state: State<&TrashTalker>,input: String) {
-    let trash: &str = &input;
-    state.save_trash(trash);
+fn post_trash(chain: State<RwLock<MarkovChain>>,input: String) {
+    let mut chain = chain.write().unwrap();
+    chain.add_sentence(input);
 }
 
 fn main() {
     let contents = parse_file("markov/resources/rude.txt");
     let splitted = contents.split("\n");
     let sentences = splitted.collect::<Vec<&str>>();
-    let mut tt = TrashTalker::new();
+    let mut tt = MarkovChain::new();
     for sentence in sentences {
-        tt.save_trash(sentence);
+        tt.add_sentence(sentence.to_string());
     }
 
-    rocket::ignite().mount("/", routes![get_trash, post_trash]).manage(tt).launch();
+    let slack = Slack::new("https://hooks.slack.com/services/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").unwrap();
+
+    rocket::ignite()
+        .mount("/", routes![post_trash, get_trash])
+        .manage(RwLock::new(tt))
+        .manage(slack)
+        .launch();
 }

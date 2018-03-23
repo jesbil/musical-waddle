@@ -18,7 +18,7 @@ impl MarkovChain {
         }
     }
 
-    pub fn add_sentence(&mut self, sentence: &str) {
+    pub fn add_sentence(&mut self, sentence: String) {
         let words = sentence.split(" ").collect::<Vec<&str>>();
         let word_count = words.len();
 
@@ -61,7 +61,7 @@ impl MarkovChain {
         }
     }
 
-    pub fn generate_sentence(self) -> String {
+    pub fn generate_sentence(&self) -> String {
         let mut rng = thread_rng();
 
         let mut key = rng.choose(&self.start_words).expect("could not get random value").to_string();
