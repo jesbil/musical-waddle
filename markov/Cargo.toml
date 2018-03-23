@@ -7,4 +7,3 @@ rand = "0.3"
 
 [lib]
 name = "markov"
-path = "src/main.rs"
