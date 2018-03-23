@@ -15,7 +15,7 @@ fn get_trash(chain: State<RwLock<MarkovChain>>, slack: State<Slack>, input: Stri
     let chain = chain.read().unwrap();
     let message = chain.generate_sentence();
     let p = PayloadBuilder::new()
-        .text(chain.generate_sentence())
+        .text(message)
         .username("TrashTalker")
         .build()
         .unwrap();
@@ -24,7 +24,7 @@ fn get_trash(chain: State<RwLock<MarkovChain>>, slack: State<Slack>, input: Stri
 
 
 #[post("/trash", data="<input>")]
-fn post_trash(chain: State<RwLock<MarkovChain>>,input: String) {
+fn post_trash(chain: State<RwLock<MarkovChain>>, input: String) {
     let mut chain = chain.write().unwrap();
     chain.add_sentence(input);
 }
