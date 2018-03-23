@@ -1,4 +1,4 @@
-mod markovchain;
+pub mod markovchain;
 use markovchain::MarkovChain;
 mod file_parser;
 fn main() {
