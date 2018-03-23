@@ -2,9 +2,11 @@
 #![plugin(rocket_codegen)]
 extern crate rocket;
 extern crate slack_hook;
+extern crate markov;
+use markov::markovchain::MarkovChain;
 use slack_hook::{Slack, PayloadBuilder};
 
-
+static mut MARKOV: MarkovChain = MarkovChain::new();
 
 
 #[get("/trash")]
@@ -15,12 +17,13 @@ fn get_trash() {
 
 #[post("/trash", data="<input>")]
 fn post_trash(input: String) {
-    save_trash(input);
+    let trash: &str = &input;
+    save_trash(trash);
 }
 
-fn save_trash(trash: String) {
+fn save_trash(trash: &str) {
     println!("Trashtalk {:?}", trash);
-
+    MarkovChain::add_sentence(&mut MARKOV, trash)
 
 }
 

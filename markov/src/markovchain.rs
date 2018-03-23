@@ -93,7 +93,7 @@ fn next_key(key: &str, value: &str) -> String {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::MarkovChain;
 
     #[test]
